@@ -1,3 +1,5 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable @typescript-eslint/no-shadow */
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -5,114 +7,96 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { FC, useEffect, useState } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AppStorys, Stories, StoryScreen, UserData, Floater, Banner, Pip } from '@appstorys/appstorys-react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const appId = '37ca2d75-8484-4cc1-97ed-d9475ce5a631';
+const accountId = '4e109ac3-be92-4a5c-bbe6-42e6c712ec9a';
+const screenName = 'Home Screen';
+const user_id = 'sf1rdsf1-sdfsf1-esf1';
+const attributes = {
+  key: 'value',
+};
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const Screen: FC = () => {
+  const [access_token, setAccess_token] = useState<string>();
+  const [data, setData] = useState<UserData>();
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  useEffect(() => {
+    async function init() {
+      await AppStorys.verifyAccount(accountId, appId);
+      await AppStorys.trackScreen(appId, screenName);
+      const verifyUser = await AppStorys.verifyUser(user_id);
+
+      if (verifyUser) {
+        setData(verifyUser);
+      }
+      await AppStorys.trackUser(user_id, attributes);
+      const access_token = await EncryptedStorage.getItem('access_token');
+      if (access_token) {
+        setAccess_token(access_token);
+      }
+    }
+
+    init();
+  }, []);
+
+  if (!data || !access_token) {
+    return null;
+  }
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+    <>
+      <Pip access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
+      <Banner access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
+      <Floater access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
+      <Stories campaigns={data.campaigns} user_id={data.user_id} />
+      </>
+  )
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  // return <Pip access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />;
+  // return (
+  //   <Banner access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
+  // );
+  // return (
+  //   <Floater access_token={access_token} campaigns={data.campaigns} user_id={data.user_id}/>
+  // );
+  // return (
+  //   <Stories campaigns={data.campaigns} user_id={data.user_id} />
+  // );
+};
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
+const Tabs: FC = () => {
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <Tab.Navigator>
+      <Tab.Screen
+        options={{
+          tabBarIcon: () => null, // This removes the icon
+        }}
+        name="AppStorys" component={Screen} />
+    </Tab.Navigator>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+const App: FC = () => {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen options={{ headerShown: false }} name="Tabs" component={Tabs} />
+          <Stack.Screen name="StoryScreen" component={StoryScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
+  );
+};
 
 export default App;
