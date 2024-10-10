@@ -52,10 +52,10 @@ const Screen: FC = () => {
   }
   return (
     <>
+    <Stories campaigns={data.campaigns} user_id={data.user_id} />
       <Pip access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
       <Banner access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
       <Floater access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
-      <Stories campaigns={data.campaigns} user_id={data.user_id} />
       </>
   )
 
