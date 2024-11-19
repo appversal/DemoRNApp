@@ -55,8 +55,12 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
   const [smallVideoPath, setSmallVideoPath] = useState("");
   const [largeVideoPath, setLargeVideoPath] = useState("");
 
-  const translationX = useRef(new Animated.Value(0)).current;
-  const translationY = useRef(new Animated.Value(0)).current;
+  const pan = useRef(
+    new Animated.ValueXY({
+      x: position.x,
+      y: position.y,
+    })
+  ).current;
 
   const data = campaigns.find(
     (val) => val.campaign_type === "PIP",
@@ -128,6 +132,19 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
     });
   }, [isExpanded, navigation, user_id, access_token]);
 
+  useEffect(() => {
+    pan.setOffset({ x: position.x, y: position.y });
+    pan.setValue({ x: 0, y: 0 });
+  }, [pan, position.x, position.y]);
+
+  const downloadVideoIfNeeded = async (url: string, isLarge: boolean) => {
+    if (isLarge) {
+      await checkAndDownloadLargeVideo(url);
+    } else {
+      await checkAndDownloadSmallVideo(url);
+    }
+  };
+
   const closePip = () => {
     setPipVisible(false);
     setExpanded(false);
@@ -135,7 +152,7 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
 
   const expandPip = () => {
     setExpanded(true);
-    checkAndDownloadLargeVideo(data.details.large_video);
+    downloadVideoIfNeeded(data.details.large_video, true);
     setPosition({ x: 0, y: 0 });
   };
 
@@ -150,31 +167,30 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
     [
       {
         nativeEvent: {
-          translationX: translationX,
-          translationY: translationY,
+          translationX: pan.x,
+          translationY: pan.y,
         },
       },
     ],
-    { useNativeDriver: true },
+    { useNativeDriver: false }
   );
 
   const onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      const { translationX: tx, translationY: ty } = event.nativeEvent;
-  
-      // Calculate new position
-      const newX = position.x + tx;
-      const newY = position.y + ty;
-  
-      // Constrain the position within screen bounds
+      pan.flattenOffset();
+      const { translationX, translationY } = event.nativeEvent;
+
+      const newX = position.x + translationX;
+      const newY = position.y + translationY;
+
       const constrainedPosition = constrainPosition(newX, newY);
-  
-      // Update position with constrained values
       setPosition(constrainedPosition);
-  
-      // Reset translations
-      translationX.setValue(0);
-      translationY.setValue(0);
+
+      pan.setOffset({
+        x: constrainedPosition.x,
+        y: constrainedPosition.y,
+      });
+      pan.setValue({ x: 0, y: 0 });
     }
   };
 
@@ -195,18 +211,8 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
                 : styles.floaterContainer,
               {
                 transform: [
-                  {
-                    translateX: Animated.add(
-                      translationX,
-                      new Animated.Value(position.x),
-                    ),
-                  },
-                  {
-                    translateY: Animated.add(
-                      translationY,
-                      new Animated.Value(position.y),
-                    ),
-                  },
+                  { translateX: pan.x },
+                  { translateY: pan.y },
                 ],
               },
             ]}
@@ -278,14 +284,6 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
                       Linking.openURL(data.details.link);
                     }
                     UserActionTrack(user_id, data.id, "CLK");
-                    // const fetchData = async () => {
-                    //   try {
-                    //     await UserActionTrack(data.id, user_id, 'CLK');
-                    //   } catch (error) {
-                    //     console.error('Error in fetching data:', error);
-                    //   }
-                    // };
-                    // fetchData();
                   }}
                 >
                   <Text style={{ color: "black", fontWeight: "500" }}>
