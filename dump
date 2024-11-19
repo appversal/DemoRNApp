@@ -20,7 +20,7 @@ import {
 import Video from "react-native-video";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
-import { UserActionTrack } from "../utils/trackuseraction";
+import { UserActionTrack } from "../utils/trackuseraction"; // Import tracking function
 import { CampaignPip, UserData } from "../sdk";
 import RNFS from "react-native-fs";
 

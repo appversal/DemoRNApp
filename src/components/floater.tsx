@@ -29,7 +29,7 @@ const Floater: React.FC<FloaterProps> = ({
   const [imagePath, setImagePath] = React.useState<string | null>(null);
 
   const downloadImage = async (url: string) => {
-    const filename = url.split("/").pop();
+    const filename = url.split("/").pop()?.split("?")[0];
     try {
       const downloadResult = await RNFS.downloadFile({
         fromUrl: url,
@@ -46,7 +46,7 @@ const Floater: React.FC<FloaterProps> = ({
   };
 
   const checkCacheForImage = async (url: string) => {
-    const filename = url.split("/").pop();
+    const filename = url.split("/").pop()?.split("?")[0];
     const path = `${RNFS.DocumentDirectoryPath}/${filename}`;
     try {
       const exists = await RNFS.exists(path);
@@ -80,7 +80,17 @@ const Floater: React.FC<FloaterProps> = ({
   return (
     <>
       {data && data.details && data.details.image !== "" && (
-        <View style={styles.container}>
+        <View style={{
+          position: "absolute",
+    // top: 0,
+    // left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "flex-end",
+    marginRight: 16 + width * 0.15,
+    marginBottom: 16,
+    zIndex: 10, 
+        }}>
           <TouchableOpacity
             activeOpacity={1}
             onPress={async () => {
@@ -100,8 +110,8 @@ const Floater: React.FC<FloaterProps> = ({
               justifyContent: "center",
               backgroundColor: "rgba(0, 0, 0, 0.7)",
               position: "absolute",
-              right: 20,
-              bottom: 20,
+              // right: 20,
+              // bottom: 20,
               overflow: "hidden",
               borderRadius: 100,
             }}
@@ -118,15 +128,6 @@ const Floater: React.FC<FloaterProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "flex-end",
-    // zIndex: 10,  // Ensure the banner is on top
-  },
   image: {
     width: "100%",
     height: "100%",

@@ -26,7 +26,7 @@ const Banner: React.FC<BannerProps> = ({
   const [imagePath, setImagePath] = useState<string | null>(null);
 
   const downloadImage = async (url: string) => {
-    const filename = url.split("/").pop();
+    const filename = url.split("/").pop()?.split("?")[0];
     try {
       const downloadResult = await RNFS.downloadFile({
         fromUrl: url,
@@ -43,7 +43,7 @@ const Banner: React.FC<BannerProps> = ({
   };
 
   const checkCacheForImage = async (url: string) => {
-    const filename = url.split("/").pop();
+    const filename = url.split("/").pop()?.split("?")[0];
     const path = `${RNFS.DocumentDirectoryPath}/${filename}`;
     try {
       const exists = await RNFS.exists(path);
@@ -93,13 +93,12 @@ const Banner: React.FC<BannerProps> = ({
               { width: width * 0.92, height: height * 0.1 },
             ]}
           >
+            <View style={styles.banner}>
             <Image
               source={{ uri: `file://${imagePath}` }}
-              style={[
-                styles.banner,
-                { width: width * 0.92, height: height * 0.1 },
-              ]}
+              style={{ width: width * 0.92, height: height * 0.1 }}
             />
+            </View>
             <TouchableOpacity onPress={closeBanner} style={styles.closeButton}>
               <Image
                 source={require("../assets/images/close.png")}
@@ -116,20 +115,20 @@ const Banner: React.FC<BannerProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 0,
+    // top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     alignItems: "center",
     justifyContent: "flex-end",
     marginBottom: 16,
-    // zIndex: 10,  // Ensure the banner is on top
+    zIndex: 10,  // Ensure the banner is on top
   },
   banner: {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 1)",
-    position: "absolute",
+    position: "relative",
     // bottom: 16,
     overflow: "visible",
   },

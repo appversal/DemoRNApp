@@ -5,7 +5,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import {AppStorys ,Stories, Pip,StoryScreen, Banner,Floater,UserData} from '@appstorys/appstorys-react-native';
+// import { AppStorys, Stories, Pip, StoryScreen, Banner, Floater, UserData } from '@appstorys/appstorys-react-native';
+import { AppStorys, Stories, Pip, StoryScreen, Banner, Floater, UserData } from './src/index';
 import { Button, View, Text, Image, Dimensions, ScrollView, TouchableOpacity, Animated } from 'react-native';
 
 // import Banner from './src/components/banner';
@@ -120,10 +121,7 @@ const Demo1
                 <Stories campaigns={data.campaigns} user_id={data.user_id} />
               </View>
             }
-            {
-          pipVisible &&
-          <Pip access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
-        }
+
 
             <Image
               source={require('./assets/imagebottom.png')}
@@ -225,7 +223,7 @@ const Demo1
             transform: [{ translateX: slideAnim }],
             // paddingHorizontal: 20,
             paddingVertical: 40,
-            zIndex: 999,
+            zIndex: 99999999,
           }}
         >
           {/* Sidebar header with title and close button */}
@@ -326,15 +324,19 @@ const Demo1
         </Animated.View>
         {/* Sidebar */}
 
+        {/* {
+          pipVisible &&  */}
+          <Pip access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
+        {/* } */}
 
         {
-          bannerVisible && 
+          bannerVisible &&
           <Banner access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
         }
 
         {
           floaterVisible &&
-          <Floater access_token={access_token} campaigns={data.campaigns} user_id={data.user_id}/>
+          <Floater access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
         }
 
       </>

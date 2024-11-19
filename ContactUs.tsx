@@ -1,13 +1,7 @@
 import { StyleSheet, Text, View, Image,Dimensions } from 'react-native'
 import React, {useState, useEffect} from 'react'
-import {AppStorys, Pip ,Stories, StoryScreen, Banner,Floater,UserData} from '@appstorys/appstorys-react-native';
-// import Banner from './src/components/banner';
-// import Floater from './src/components/floater';
-// import Pip from './src/components/pip';
-// import Stories from './src/components/stories';
-// import { StoryScreen } from './src/components/storyscreen';
-// import AppStorys from './src/sdk';
-// import { UserData } from './src/sdk';
+// import {AppStorys, Pip ,Stories, StoryScreen, Banner,Floater,UserData} from '@appstorys/appstorys-react-native';
+import { AppStorys, Stories, Pip, StoryScreen, Banner, Floater, UserData } from './src/index';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 // const appId = '37ca2d75-8484-4cc1-97ed-d9475ce5a631';
