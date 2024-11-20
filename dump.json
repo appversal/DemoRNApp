@@ -1,0 +1,122 @@
+{
+    "storyCampaignId": "6677fbce-e9ca-4d8c-9a46-fff85ad03ce5",
+    "storySlideData": {
+        "app_id": "ac4bcd63-9442-47e5-963d-6bd12d96d5a6",
+        "campaign_type": "STR",
+        "details": [
+            {
+                "id": "ca63fd88-2416-49cb-b159-a7ffe569c130",
+                "name": "Story Group 1",
+                "thumbnail": "https://appstorysmediabucket.s3.amazonaws.com/story_groups/diwali1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=ff948f0aa471a4657b14a16a4adf04b695dfb03d5d83a9e7eff77617a3754235",
+                "ringColor": "#9900ff",
+                "nameColor": "#000000",
+                "order": 2,
+                "slides": [
+                    {
+                        "id": "e2cc8667-5ff6-48a6-b4ef-45199e299b97",
+                        "parent": "ca63fd88-2416-49cb-b159-a7ffe569c130",
+                        "image": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/diwali2.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=23048031143935c54f9b3bbc6789bd1f032bea120c5e845e44c47db958eaf87d",
+                        "video": null,
+                        "link": "https://appstorys.com/",
+                        "button_text": "AppStorys",
+                        "order": 1
+                    }
+                ]
+            },
+            {
+                "id": "0e7a5fb1-a26a-413f-b904-6251a5b7ff98",
+                "name": "Story Group 3",
+                "thumbnail": "https://appstorysmediabucket.s3.amazonaws.com/story_groups/diwali5.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=d1f736e7f84bb7346c9b096c928d7c0d05be8233650a048989f95dd88cb5b129",
+                "ringColor": "#ffbb00",
+                "nameColor": "#000000",
+                "order": 2,
+                "slides": [
+                    {
+                        "id": "3aae95e4-554b-4841-9a9a-356b8fe07582",
+                        "parent": "0e7a5fb1-a26a-413f-b904-6251a5b7ff98",
+                        "image": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/diwali6.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=c83be3db4e654645ef5633d1674bdbf2fb42fd0d71f87857b496371f5c23ebd1",
+                        "video": null,
+                        "link": "https://asowin.com/",
+                        "button_text": "Asowin",
+                        "order": 1
+                    }
+                ]
+            },
+            {
+                "id": "cacba780-9763-4aa0-a9c5-f90fc5d3d10b",
+                "name": "Story Group 2",
+                "thumbnail": "https://appstorysmediabucket.s3.amazonaws.com/story_groups/diwali3.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=c76e4f6bcecedc269d47ca66d120c027fac92cf667e5719516d1c165bfaca64f",
+                "ringColor": "#9900ff",
+                "nameColor": "#000000",
+                "order": 3,
+                "slides": [
+                    {
+                        "id": "18c8906c-ae6b-43eb-8152-2a8d4f182530",
+                        "parent": "cacba780-9763-4aa0-a9c5-f90fc5d3d10b",
+                        "image": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/diwali4.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=2b149d4f4be27ec4c1c2ed7b9701ef2c2e05c389d2f76f0b09b615ae82f40def",
+                        "video": null,
+                        "link": "https://appstarrs.com/",
+                        "button_text": "AppStarrs",
+                        "order": 1
+                    },
+                    {
+                        "id": "5fda8345-6a88-47fc-a997-c9fbb5c0e048",
+                        "parent": "cacba780-9763-4aa0-a9c5-f90fc5d3d10b",
+                        "image": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/Screenshot_74.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=67679e14ad7d9029552c437235d62462c23228fcec1a0693acedf4521cba55ee",
+                        "video": null,
+                        "link": "https://www.google.com",
+                        "button_text": "click me",
+                        "order": 2
+                    },
+                    {
+                        "id": "e03f3334-6aa0-4620-8557-cd5ba5c082b1",
+                        "parent": "cacba780-9763-4aa0-a9c5-f90fc5d3d10b",
+                        "image": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/Screenshot_2024-10-31_142101.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=897fcc22f35f9a2d18d8dc53c9b736e1c3ef10976cca5943e8e9f35cb3b21487",
+                        "video": null,
+                        "link": "",
+                        "button_text": "",
+                        "order": 3
+                    },
+                    {
+                        "id": "56a4da4b-daf5-4f92-9a1f-25198176bc87",
+                        "parent": "cacba780-9763-4aa0-a9c5-f90fc5d3d10b",
+                        "image": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/Screenshot_2024-10-26_151421.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=7acca2617c888fafcda06a9c3861c1381ed644ecf973f82ce418ccab8acd11c5",
+                        "video": null,
+                        "link": "",
+                        "button_text": "",
+                        "order": 4
+                    },
+                    {
+                        "id": "9c41da71-fab2-4430-b315-4e4e7c5574c9",
+                        "parent": "cacba780-9763-4aa0-a9c5-f90fc5d3d10b",
+                        "image": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/Screenshot_2024-10-17_232257.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=a0bb9665eb3823a659fea8f34679b32b43bc3d487898f6639899813ea0684ac4",
+                        "video": null,
+                        "link": "",
+                        "button_text": "",
+                        "order": 5
+                    },
+                    {
+                        "id": "cc5d7d7a-f019-4fe2-aeda-1b2b4521e41d",
+                        "parent": "cacba780-9763-4aa0-a9c5-f90fc5d3d10b",
+                        "image": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/Screenshot_2024-10-17_232341.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=cdf37849441890ab076003038c3f0fb16e4205d1a1996370ab9dd2744bd6e92f",
+                        "video": null,
+                        "link": "",
+                        "button_text": "",
+                        "order": 6
+                    },
+                    {
+                        "id": "e63e1548-6e35-4e46-a28a-171367981af5",
+                        "parent": "cacba780-9763-4aa0-a9c5-f90fc5d3d10b",
+                        "image": null,
+                        "video": "https://appstorysmediabucket.s3.amazonaws.com/story_slides/file_example_MP4_640_3MG.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2UC3EJVDKODMD6EH%2F20241120%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241120T080232Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=5bc42953c58653a5ed9273bb730f7b302d7950e85d73073fc00fab4e7cf94cff",
+                        "link": "",
+                        "button_text": "",
+                        "order": 7
+                    }
+                ]
+            }
+        ],
+        "id": "6677fbce-e9ca-4d8c-9a46-fff85ad03ce5"
+    },
+    "user_id": "adc3354364wsbvdsx"
+}

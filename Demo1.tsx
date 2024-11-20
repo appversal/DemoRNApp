@@ -324,10 +324,10 @@ const Demo1
         </Animated.View>
         {/* Sidebar */}
 
-        {/* {
-          pipVisible &&  */}
+        {
+          pipVisible && 
           <Pip access_token={access_token} campaigns={data.campaigns} user_id={data.user_id} />
-        {/* } */}
+        }
 
         {
           bannerVisible &&

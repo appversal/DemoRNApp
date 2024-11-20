@@ -36,11 +36,20 @@ export interface StoriesProps {
   };
 }
 
+// type RootStackParamList = {
+//   StoryScreen: {
+//     storySlideData: CampaignStory;
+//     storyCampaignId: string;
+//     user_id: string;
+//   };
+// };
+
 type RootStackParamList = {
   StoryScreen: {
-    storySlideData: StoryGroup;
+    storySlideData: CampaignStory;
     storyCampaignId: string;
     user_id: string;
+    initialGroupIndex: number; // Add this to track which group to start with
   };
 };
 
@@ -48,42 +57,80 @@ const closeImage = require("../assets/images/close.png");
 const shareImage = require("../assets/images/share.png");
 
 export const StoryScreen = () => {
+  // const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  // navigation.setOptions;
+  // const { params } = useRoute<RouteProp<RootStackParamList, "StoryScreen">>();
+  // const { height, width } = Dimensions.get("window");
+
+  // const [content, setContent] = useState<StorySlide[]>([]);
+
+  // const [currentStorySlide, setCurrentStorySlide] = useState(0);
+
+  // useEffect(() => {
+  //   setCurrentStorySlide(0);
+  //   console.log(params);
+
+  //   if (!params) {
+  //     return;
+  //   }
+
+  //   // if (params && params.storyCampaignId) {
+  //   //   UserActionTrack(user_id, params.storyCampaignId, 'IMP', params.storySlideData.slides[currentStorySlide].id);
+  //   // }
+  //   const slides = params.storySlideData.details[current].slides;
+  //   // Transform the storySlideData to add the 'finish' field to each element
+  //   const transformedData = slides.map((storySlide) => ({
+  //     ...storySlide, // Keep the existing properties
+  //     finish: 0, // Add the 'finish' property with value 0
+  //   }));
+
+  //   // Set the transformed data to the state
+  //   setContent(transformedData);
+
+  //   navigation.setOptions({
+  //     headerShown: false,
+  //   });
+  // }, [params, navigation]);
+
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  navigation.setOptions;
   const { params } = useRoute<RouteProp<RootStackParamList, "StoryScreen">>();
   const { height, width } = Dimensions.get("window");
 
   const [content, setContent] = useState<StorySlide[]>([]);
-
+  const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
+  const [current, setCurrent] = useState(0);
   const [currentStorySlide, setCurrentStorySlide] = useState(0);
+  const [, setVideoDuration] = useState(5);
+  
 
   useEffect(() => {
-    setCurrentStorySlide(0);
+    if (!params) return;
 
-    if (!params) {
-      return;
-    }
-
-    // if (params && params.storyCampaignId) {
-    //   UserActionTrack(user_id, params.storyCampaignId, 'IMP', params.storySlideData.slides[currentStorySlide].id);
-    // }
-    const slides = params.storySlideData.slides;
-    // Transform the storySlideData to add the 'finish' field to each element
-    const transformedData = slides.map((storySlide) => ({
-      ...storySlide, // Keep the existing properties
-      finish: 0, // Add the 'finish' property with value 0
-    }));
-
-    // Set the transformed data to the state
-    setContent(transformedData);
-
+    // Initialize with the clicked group index
+    setCurrentGroupIndex(params.initialGroupIndex);
+    loadStoryGroup(params.initialGroupIndex);
+    
     navigation.setOptions({
       headerShown: false,
     });
   }, [params, navigation]);
 
-  const [current, setCurrent] = useState(0);
-  const [, setVideoDuration] = useState(5); // Default to 5 seconds for fallback
+  const loadStoryGroup = (groupIndex: number) => {
+    if (!params?.storySlideData?.details[groupIndex]) {
+      close();
+      return;
+    }
+
+    const slides = params.storySlideData.details[groupIndex].slides;
+    const transformedData = slides.map((storySlide) => ({
+      ...storySlide,
+      finish: 0,
+    }));
+
+    setContent(transformedData);
+    setCurrent(0);
+    setCurrentStorySlide(0);
+  };
 
   // Share function
   const shareContent = async () => {
@@ -99,20 +146,76 @@ export const StoryScreen = () => {
 
   const progress = useRef(new Animated.Value(0)).current;
 
+  // const start = (duration: number) => {
+  //   if (params?.storySlideData?.details[current].slides?.[currentStorySlide]?.id !== undefined) {
+  //     if (params?.storyCampaignId) {
+  //       UserActionTrack(
+  //         user_id,
+  //         params.storyCampaignId,
+  //         "IMP",
+  //         params.storySlideData.details[current].slides[currentStorySlide]?.id ?? "",
+  //       );
+  //       setCurrentStorySlide(currentStorySlide + 1);
+  //     }
+  //   }
+
+  //   console.log(`Starting animation for ${duration / 1000} seconds`);
+
+  //   Animated.timing(progress, {
+  //     toValue: 1,
+  //     duration: duration,
+  //     useNativeDriver: false,
+  //   }).start(({ finished }) => {
+  //     if (finished) {
+  //       next();
+  //     }
+  //   });
+  // };
+
+  // const next = () => {
+
+  //   if (current !== content.length - 1) {
+  //     let tempData = [...content];
+  //     if (tempData[current]) {
+  //       tempData[current].finish = 1;
+  //     }
+  //     setContent(tempData);
+  //     // Uncomment this line plz
+  //     setCurrent(current + 1);
+  //     progress.setValue(0);
+  //     // console.log("Current : ", content);
+  //   } else {
+  //     close();
+  //   }
+  // };
+
+  // const previous = () => {
+  //   if (currentStorySlide > 0) {
+  //     setCurrentStorySlide(currentStorySlide - 1);
+  //   }
+  //   if (current - 1 >= 0) {
+  //     let tempData = [...content];
+  //     if (tempData[current]) {
+  //       tempData[current].finish = 0;
+  //     }
+  //     setContent(tempData);
+  //     progress.setValue(0);
+  //     setCurrent(current - 1);
+  //   }
+  // };
+
   const start = (duration: number) => {
-    if (params?.storySlideData?.slides?.[currentStorySlide]?.id !== undefined) {
+    if (params?.storySlideData?.details[currentGroupIndex].slides?.[currentStorySlide]?.id) {
       if (params?.storyCampaignId) {
         UserActionTrack(
-          user_id,
+          params.user_id,
           params.storyCampaignId,
           "IMP",
-          params.storySlideData.slides[currentStorySlide]?.id ?? "",
+          params.storySlideData.details[currentGroupIndex].slides[currentStorySlide]?.id ?? "",
         );
         setCurrentStorySlide(currentStorySlide + 1);
       }
     }
-
-    console.log(`Starting animation for ${duration / 1000} seconds`);
 
     Animated.timing(progress, {
       toValue: 1,
@@ -126,27 +229,28 @@ export const StoryScreen = () => {
   };
 
   const next = () => {
-    console.log("shcuids" + currentStorySlide);
-
     if (current !== content.length - 1) {
       let tempData = [...content];
       if (tempData[current]) {
         tempData[current].finish = 1;
       }
       setContent(tempData);
-      // Uncomment this line plz
       setCurrent(current + 1);
       progress.setValue(0);
     } else {
-      close();
+      // Move to next story group
+      const nextGroupIndex = currentGroupIndex + 1;
+      if (nextGroupIndex < params!.storySlideData.details.length) {
+        setCurrentGroupIndex(nextGroupIndex);
+        loadStoryGroup(nextGroupIndex);
+      } else {
+        close();
+      }
     }
   };
 
   const previous = () => {
-    if (currentStorySlide > 0) {
-      setCurrentStorySlide(currentStorySlide - 1);
-    }
-    if (current - 1 >= 0) {
+    if (current > 0) {
       let tempData = [...content];
       if (tempData[current]) {
         tempData[current].finish = 0;
@@ -154,6 +258,13 @@ export const StoryScreen = () => {
       setContent(tempData);
       progress.setValue(0);
       setCurrent(current - 1);
+    } else if (currentGroupIndex > 0) {
+      // Move to previous story group
+      const prevGroupIndex = currentGroupIndex - 1;
+      setCurrentGroupIndex(prevGroupIndex);
+      const prevGroupSlides = params!.storySlideData.details[prevGroupIndex].slides;
+      loadStoryGroup(prevGroupIndex);
+      setCurrent(prevGroupSlides.length - 1);
     }
   };
 
@@ -297,11 +408,22 @@ export const StoryScreen = () => {
               flexDirection: "row",
             }}
           >
-            {storySlideData &&
-              storySlideData.thumbnail &&
-              storySlideData.thumbnail != "" && (
+            {/* {storySlideData &&
+              storySlideData.details[current].thumbnail &&
+              storySlideData.details[current].thumbnail != "" && (
                 <Image
-                  source={{ uri: storySlideData.thumbnail }}
+                  source={{ uri: storySlideData.details[current].thumbnail }}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                  }}
+                />
+              )} */}
+              {
+              params?.storySlideData?.details[currentGroupIndex].thumbnail && (
+                <Image
+                  source={{ uri: params?.storySlideData?.details[currentGroupIndex].thumbnail }}
                   style={{
                     width: 40,
                     height: 40,
@@ -309,9 +431,9 @@ export const StoryScreen = () => {
                   }}
                 />
               )}
-            {storySlideData &&
-              storySlideData.name &&
-              storySlideData.name != "" && (
+            {/* {storySlideData &&
+              storySlideData.details[current].name &&
+              storySlideData.details[current].name != "" && (
                 <Text
                   style={{
                     marginLeft: 12,
@@ -320,9 +442,19 @@ export const StoryScreen = () => {
                     color: "white",
                   }}
                 >
-                  {storySlideData.name}
+                  {storySlideData.details[current].name}
                 </Text>
-              )}
+              )} */}
+              {params?.storySlideData?.details[currentGroupIndex].name && (
+        <Text style={{
+          marginLeft: 12,
+          fontSize: 15,
+          fontWeight: "500",
+          color: "white",
+        }}>
+          {params.storySlideData.details[currentGroupIndex].name}
+        </Text>
+      )}
           </View>
 
           <View
