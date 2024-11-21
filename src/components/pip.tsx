@@ -48,19 +48,23 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
 
   const [isPipVisible, setPipVisible] = useState(true);
   const [isExpanded, setExpanded] = useState(false);
-  const [position, setPosition] = useState({
-    x: width - 160,
-    y: height - (tabBarHeight + pipBottomValue),
-  });
+
   const [smallVideoPath, setSmallVideoPath] = useState("");
   const [largeVideoPath, setLargeVideoPath] = useState("");
 
+  const initialX = width - 160
+  const initialY = height - (tabBarHeight + pipBottomValue)
+
   const pan = useRef(
     new Animated.ValueXY({
-      x: position.x,
-      y: position.y,
+      x: 0,
+      y: 0,
     })
   ).current;
+
+  useEffect(() => {
+    pan.setOffset({ x: initialX, y: initialY });
+  }, [])
 
   const data = campaigns.find(
     (val) => val.campaign_type === "PIP",
@@ -132,19 +136,6 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
     });
   }, [isExpanded, navigation, user_id, access_token]);
 
-  useEffect(() => {
-    pan.setOffset({ x: position.x, y: position.y });
-    pan.setValue({ x: 0, y: 0 });
-  }, [pan, position.x, position.y]);
-
-  const downloadVideoIfNeeded = async (url: string, isLarge: boolean) => {
-    if (isLarge) {
-      await checkAndDownloadLargeVideo(url);
-    } else {
-      await checkAndDownloadSmallVideo(url);
-    }
-  };
-
   const closePip = () => {
     setPipVisible(false);
     setExpanded(false);
@@ -152,8 +143,8 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
 
   const expandPip = () => {
     setExpanded(true);
-    downloadVideoIfNeeded(data.details.large_video, true);
-    setPosition({ x: 0, y: 0 });
+    checkAndDownloadLargeVideo(data.details.large_video);
+    pan.setOffset({ x: 0, y: 0 });
   };
 
   const constrainPosition = (x: number, y: number) => {
@@ -172,25 +163,18 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
         },
       },
     ],
-    { useNativeDriver: false }
+    { useNativeDriver: true },
   );
 
   const onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      pan.flattenOffset();
-      const { translationX, translationY } = event.nativeEvent;
+      const {  absoluteX, absoluteY, x, y, } = event.nativeEvent;
 
-      const newX = position.x + translationX;
-      const newY = position.y + translationY;
+      const constrainedPosition = constrainPosition(absoluteX - x, absoluteY - y);
 
-      const constrainedPosition = constrainPosition(newX, newY);
-      setPosition(constrainedPosition);
-
-      pan.setOffset({
-        x: constrainedPosition.x,
-        y: constrainedPosition.y,
-      });
+      pan.setOffset(constrainedPosition);
       pan.setValue({ x: 0, y: 0 });
+  
     }
   };
 
@@ -211,16 +195,18 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
                 : styles.floaterContainer,
               {
                 transform: [
-                  { translateX: pan.x },
-                  { translateY: pan.y },
+                  {
+                    translateX: pan.x
+                  },
+                  {
+                    translateY: pan.y
+                  },
                 ],
               },
             ]}
           >
             <View onTouchEnd={expandPip} style={{ flex: 1 }}>
-              {data &&
-                data.details &&
-                data.details.small_video &&
+              {data.details.small_video &&
                 data.details.large_video && (
                   <Video
                     repeat={true}
@@ -284,6 +270,14 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
                       Linking.openURL(data.details.link);
                     }
                     UserActionTrack(user_id, data.id, "CLK");
+                    // const fetchData = async () => {
+                    //   try {
+                    //     await UserActionTrack(data.id, user_id, 'CLK');
+                    //   } catch (error) {
+                    //     console.error('Error in fetching data:', error);
+                    //   }
+                    // };
+                    // fetchData();
                   }}
                 >
                   <Text style={{ color: "black", fontWeight: "500" }}>
