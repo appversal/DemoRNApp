@@ -39,7 +39,7 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
 
   const PIP_WIDTH = 140;
   const PIP_HEIGHT = 200;
-  
+
   // Calculate the maximum x and y positions to keep PIP within screen bounds
   const MAX_X = width - PIP_WIDTH - 20;
   const MAX_Y = height - (tabBarHeight + PIP_HEIGHT) - 20;
@@ -48,15 +48,23 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
 
   const [isPipVisible, setPipVisible] = useState(true);
   const [isExpanded, setExpanded] = useState(false);
-  const [position, setPosition] = useState({
-    x: width - 160,
-    y: height - (tabBarHeight + pipBottomValue),
-  });
+
   const [smallVideoPath, setSmallVideoPath] = useState("");
   const [largeVideoPath, setLargeVideoPath] = useState("");
 
-  const translationX = useRef(new Animated.Value(0)).current;
-  const translationY = useRef(new Animated.Value(0)).current;
+  const initialX = width - 160
+  const initialY = height - (tabBarHeight + pipBottomValue)
+
+  const pan = useRef(
+    new Animated.ValueXY({
+      x: 0,
+      y: 0,
+    })
+  ).current;
+
+  useEffect(() => {
+    pan.setOffset({ x: initialX, y: initialY });
+  }, [])
 
   const data = campaigns.find(
     (val) => val.campaign_type === "PIP",
@@ -136,7 +144,7 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
   const expandPip = () => {
     setExpanded(true);
     checkAndDownloadLargeVideo(data.details.large_video);
-    setPosition({ x: 0, y: 0 });
+    pan.setOffset({ x: 0, y: 0 });
   };
 
   const constrainPosition = (x: number, y: number) => {
@@ -150,8 +158,8 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
     [
       {
         nativeEvent: {
-          translationX: translationX,
-          translationY: translationY,
+          translationX: pan.x,
+          translationY: pan.y,
         },
       },
     ],
@@ -160,21 +168,13 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
 
   const onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      const { translationX: tx, translationY: ty } = event.nativeEvent;
-  
-      // Calculate new position
-      const newX = position.x + tx;
-      const newY = position.y + ty;
-  
-      // Constrain the position within screen bounds
-      const constrainedPosition = constrainPosition(newX, newY);
-  
-      // Update position with constrained values
-      setPosition(constrainedPosition);
-  
-      // Reset translations
-      translationX.setValue(0);
-      translationY.setValue(0);
+      const { absoluteX, absoluteY, x, y, } = event.nativeEvent;
+
+      const constrainedPosition = constrainPosition(absoluteX - x, absoluteY - y);
+
+      pan.setOffset(constrainedPosition);
+      pan.setValue({ x: 0, y: 0 });
+
     }
   };
 
@@ -196,25 +196,17 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
               {
                 transform: [
                   {
-                    translateX: Animated.add(
-                      translationX,
-                      new Animated.Value(position.x),
-                    ),
+                    translateX: pan.x
                   },
                   {
-                    translateY: Animated.add(
-                      translationY,
-                      new Animated.Value(position.y),
-                    ),
+                    translateY: pan.y
                   },
                 ],
               },
             ]}
           >
             <View onTouchEnd={expandPip} style={{ flex: 1 }}>
-              {data &&
-                data.details &&
-                data.details.small_video &&
+              {data.details.small_video &&
                 data.details.large_video && (
                   <Video
                     repeat={true}
@@ -238,7 +230,7 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
                 )}
             </View>
 
-            <TouchableOpacity
+            <TouchableWithoutFeedback
               onPress={closePip}
               style={
                 isExpanded
@@ -254,25 +246,26 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
                     : styles.closePipButtonText
                 }
               />
-            </TouchableOpacity>
+            </TouchableWithoutFeedback>
 
             {data && data.details && data.details.link && (
               <View
                 style={{
                   display: isExpanded ? "flex" : "none",
                   position: "absolute",
-                  backgroundColor: "white",
-                  width: width - 40,
-                  height: 40,
+                  width: width,
                   justifyContent: "center",
                   alignItems: "center",
-                  borderRadius: 4,
                   bottom:
                     Platform.OS === "ios" ? height * 0.045 : height * 0.025,
-                  left: 20,
                 }}
               >
                 <TouchableWithoutFeedback
+                  style={{
+                    backgroundColor: "white",
+                    borderRadius: 30,
+
+                  }}
                   onPress={() => {
                     if (data.details.link) {
                       Linking.openURL(data.details.link);
@@ -288,7 +281,15 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
                     // fetchData();
                   }}
                 >
-                  <Text style={{ color: "black", fontWeight: "500" }}>
+                  <Text style={{
+                    color: "black",
+                    fontWeight: "600",
+                    textAlign: 'center',
+                    textAlignVertical: 'center',
+                    height: 45,
+                    paddingVertical: 10,
+                    paddingHorizontal: 25,
+                  }}>
                     Continue
                   </Text>
                 </TouchableWithoutFeedback>

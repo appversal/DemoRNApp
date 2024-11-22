@@ -90,13 +90,13 @@ const Banner: React.FC<BannerProps> = ({
             }}
             style={[
               styles.banner,
-              { width: width * 0.92, height: height * 0.1 },
+              { width: width * 0.92, height: height * 0.1, borderRadius: 6,},
             ]}
           >
-            <View style={styles.banner}>
+            <View style={[styles.banner, {borderRadius: 6,}]}>
             <Image
               source={{ uri: `file://${imagePath}` }}
-              style={{ width: width * 0.92, height: height * 0.1 }}
+              style={{ width: width * 0.92, height: height * 0.1, borderRadius: 6, }}
             />
             </View>
             <TouchableOpacity onPress={closeBanner} style={styles.closeButton}>
@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginBottom: 16,
     zIndex: 10,  // Ensure the banner is on top
+    
   },
   banner: {
     alignItems: "center",

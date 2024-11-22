@@ -36,14 +36,6 @@ export interface StoriesProps {
   };
 }
 
-// type RootStackParamList = {
-//   StoryScreen: {
-//     storySlideData: CampaignStory;
-//     storyCampaignId: string;
-//     user_id: string;
-//   };
-// };
-
 type RootStackParamList = {
   StoryScreen: {
     storySlideData: CampaignStory;
@@ -57,40 +49,6 @@ const closeImage = require("../assets/images/close.png");
 const shareImage = require("../assets/images/share.png");
 
 export const StoryScreen = () => {
-  // const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  // navigation.setOptions;
-  // const { params } = useRoute<RouteProp<RootStackParamList, "StoryScreen">>();
-  // const { height, width } = Dimensions.get("window");
-
-  // const [content, setContent] = useState<StorySlide[]>([]);
-
-  // const [currentStorySlide, setCurrentStorySlide] = useState(0);
-
-  // useEffect(() => {
-  //   setCurrentStorySlide(0);
-  //   console.log(params);
-
-  //   if (!params) {
-  //     return;
-  //   }
-
-  //   // if (params && params.storyCampaignId) {
-  //   //   UserActionTrack(user_id, params.storyCampaignId, 'IMP', params.storySlideData.slides[currentStorySlide].id);
-  //   // }
-  //   const slides = params.storySlideData.details[current].slides;
-  //   // Transform the storySlideData to add the 'finish' field to each element
-  //   const transformedData = slides.map((storySlide) => ({
-  //     ...storySlide, // Keep the existing properties
-  //     finish: 0, // Add the 'finish' property with value 0
-  //   }));
-
-  //   // Set the transformed data to the state
-  //   setContent(transformedData);
-
-  //   navigation.setOptions({
-  //     headerShown: false,
-  //   });
-  // }, [params, navigation]);
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { params } = useRoute<RouteProp<RootStackParamList, "StoryScreen">>();
@@ -101,7 +59,7 @@ export const StoryScreen = () => {
   const [current, setCurrent] = useState(0);
   const [currentStorySlide, setCurrentStorySlide] = useState(0);
   const [, setVideoDuration] = useState(5);
-  
+
 
   useEffect(() => {
     if (!params) return;
@@ -109,7 +67,7 @@ export const StoryScreen = () => {
     // Initialize with the clicked group index
     setCurrentGroupIndex(params.initialGroupIndex);
     loadStoryGroup(params.initialGroupIndex);
-    
+
     navigation.setOptions({
       headerShown: false,
     });
@@ -126,6 +84,9 @@ export const StoryScreen = () => {
       ...storySlide,
       finish: 0,
     }));
+
+    // Remove this line if needed if the progress does not works properly
+    progress.setValue(0);
 
     setContent(transformedData);
     setCurrent(0);
@@ -145,64 +106,6 @@ export const StoryScreen = () => {
   };
 
   const progress = useRef(new Animated.Value(0)).current;
-
-  // const start = (duration: number) => {
-  //   if (params?.storySlideData?.details[current].slides?.[currentStorySlide]?.id !== undefined) {
-  //     if (params?.storyCampaignId) {
-  //       UserActionTrack(
-  //         user_id,
-  //         params.storyCampaignId,
-  //         "IMP",
-  //         params.storySlideData.details[current].slides[currentStorySlide]?.id ?? "",
-  //       );
-  //       setCurrentStorySlide(currentStorySlide + 1);
-  //     }
-  //   }
-
-  //   console.log(`Starting animation for ${duration / 1000} seconds`);
-
-  //   Animated.timing(progress, {
-  //     toValue: 1,
-  //     duration: duration,
-  //     useNativeDriver: false,
-  //   }).start(({ finished }) => {
-  //     if (finished) {
-  //       next();
-  //     }
-  //   });
-  // };
-
-  // const next = () => {
-
-  //   if (current !== content.length - 1) {
-  //     let tempData = [...content];
-  //     if (tempData[current]) {
-  //       tempData[current].finish = 1;
-  //     }
-  //     setContent(tempData);
-  //     // Uncomment this line plz
-  //     setCurrent(current + 1);
-  //     progress.setValue(0);
-  //     // console.log("Current : ", content);
-  //   } else {
-  //     close();
-  //   }
-  // };
-
-  // const previous = () => {
-  //   if (currentStorySlide > 0) {
-  //     setCurrentStorySlide(currentStorySlide - 1);
-  //   }
-  //   if (current - 1 >= 0) {
-  //     let tempData = [...content];
-  //     if (tempData[current]) {
-  //       tempData[current].finish = 0;
-  //     }
-  //     setContent(tempData);
-  //     progress.setValue(0);
-  //     setCurrent(current - 1);
-  //   }
-  // };
 
   const start = (duration: number) => {
     if (params?.storySlideData?.details[currentGroupIndex].slides?.[currentStorySlide]?.id) {
@@ -408,19 +311,7 @@ export const StoryScreen = () => {
               flexDirection: "row",
             }}
           >
-            {/* {storySlideData &&
-              storySlideData.details[current].thumbnail &&
-              storySlideData.details[current].thumbnail != "" && (
-                <Image
-                  source={{ uri: storySlideData.details[current].thumbnail }}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                  }}
-                />
-              )} */}
-              {
+            {
               params?.storySlideData?.details[currentGroupIndex].thumbnail && (
                 <Image
                   source={{ uri: params?.storySlideData?.details[currentGroupIndex].thumbnail }}
@@ -431,30 +322,16 @@ export const StoryScreen = () => {
                   }}
                 />
               )}
-            {/* {storySlideData &&
-              storySlideData.details[current].name &&
-              storySlideData.details[current].name != "" && (
-                <Text
-                  style={{
-                    marginLeft: 12,
-                    fontSize: 15,
-                    fontWeight: "500",
-                    color: "white",
-                  }}
-                >
-                  {storySlideData.details[current].name}
-                </Text>
-              )} */}
-              {params?.storySlideData?.details[currentGroupIndex].name && (
-        <Text style={{
-          marginLeft: 12,
-          fontSize: 15,
-          fontWeight: "500",
-          color: "white",
-        }}>
-          {params.storySlideData.details[currentGroupIndex].name}
-        </Text>
-      )}
+            {params?.storySlideData?.details[currentGroupIndex].name && (
+              <Text style={{
+                marginLeft: 12,
+                fontSize: 15,
+                fontWeight: "500",
+                color: "white",
+              }}>
+                {params.storySlideData.details[currentGroupIndex].name}
+              </Text>
+            )}
           </View>
 
           <View
@@ -466,16 +343,21 @@ export const StoryScreen = () => {
               bottom: 2,
             }}
           >
-            <TouchableOpacity onPress={shareContent} style={{}}>
-              <Image
-                source={shareImage}
-                style={{
-                  height: 20,
-                  width: 20,
-                  margin: 16,
-                }}
-              />
-            </TouchableOpacity>
+            {
+              content &&
+              content[current] &&
+              content[current]?.button_text &&
+              content[current]?.link &&
+              <TouchableOpacity onPress={shareContent} style={{}}>
+                <Image
+                  source={shareImage}
+                  style={{
+                    height: 20,
+                    width: 20,
+                    margin: 16,
+                  }}
+                />
+              </TouchableOpacity>}
 
             <TouchableOpacity onPress={close} style={{}}>
               <Image
@@ -536,35 +418,28 @@ export const StoryScreen = () => {
                     user_id,
                     params.storyCampaignId,
                     "CLK",
-                    // params.storySlideData.slides[currentStorySlide]?.id ?? "",
                     content[current]?.id!,
                   );
                 }
-                // const fetchData = async () => {
-                //   try {
-                //     await UserActionTrack(user_id, storyCampaignId, 'CNV');
-
-                //     // console.log(userTrackData);
-
-                //   } catch (error) {
-                //     console.error('Error in fetching data:', error);
-                //   }
-                // };
-
-                // fetchData();
               }}
             >
               <View
                 style={{
                   backgroundColor: "white",
-                  borderRadius: 8,
-                  paddingHorizontal: 18,
-                  paddingVertical: 12,
+                  borderRadius: 30,
+                  // paddingHorizontal: 18,
+                  // paddingVertical: 12,
                 }}
               >
                 <Text
                   style={{
                     color: "black",
+                    fontWeight: "600",
+                    textAlign: 'center',
+                    textAlignVertical: 'center',
+                    height: 45,
+                    paddingVertical: 10,
+                    paddingHorizontal: 25,
                   }}
                 >
                   {content[current]?.button_text}
