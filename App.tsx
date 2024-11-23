@@ -14,6 +14,7 @@ import Demo1 from './Demo1';
 // import Demo2 from './Demo2';
 // import Demo3 from './Demo3';
 import ContactUs from './ContactUs';
+import { PipScreen } from './src/components/pipscreen';
 // import Demo4 from './Demo4';
 
 // const appId = '37ca2d75-8484-4cc1-97ed-d9475ce5a631';
@@ -149,13 +150,17 @@ const App: FC = () => {
           {/* Tabs screen */}
           <Stack.Screen 
             options={{headerShown: false}} 
-            name="Tabs" 
+            name="Appbar" 
             component={Tabs} 
           />
           {/* Other screens */}
           <Stack.Screen 
             name="StoryScreen" 
             component={StoryScreen} 
+          />
+          <Stack.Screen 
+            name="PipScreen"
+            component={PipScreen} 
           />
           {/* Add ContactUs screen here */}
           <Stack.Screen

@@ -19,10 +19,11 @@ import {
 } from "react-native-gesture-handler";
 import Video from "react-native-video";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
 import { UserActionTrack } from "../utils/trackuseraction";
 import { CampaignPip, UserData } from "../sdk";
 import RNFS from "react-native-fs";
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,12 +31,23 @@ export type PipProps = {
   access_token: string;
 } & UserData;
 
+type RootStackParamList = {
+  PipScreen: {
+    user_id: string;
+    id: string;
+    link: string | null;
+    largeVideoUrl: string;
+  };
+};
+
 const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
   // let pipBottomValue = height > 700 ? (Platform.OS === "ios" ? 220 : 220) : 220;
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   let pipBottomValue = 220;
 
+  const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
-  const navigation = useNavigation();
 
   const PIP_WIDTH = 140;
   const PIP_HEIGHT = 200;
@@ -44,10 +56,10 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
   const MAX_X = width - PIP_WIDTH - 20;
   const MAX_Y = height - (tabBarHeight + PIP_HEIGHT) - 20;
   const MIN_X = 20;
-  const MIN_Y = Platform.OS === "ios" ? 60 : 20;
+  const MIN_Y = Platform.OS === "ios" ? (60 + headerHeight) : (20 + headerHeight);
 
   const [isPipVisible, setPipVisible] = useState(true);
-  const [isExpanded, setExpanded] = useState(false);
+  // const [isExpanded, setExpanded] = useState(false);
 
   const [smallVideoPath, setSmallVideoPath] = useState("");
   const [largeVideoPath, setLargeVideoPath] = useState("");
@@ -129,22 +141,28 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
       UserActionTrack(user_id, data.id, "IMP");
       const smallVideoUrl = data.details.small_video;
       checkAndDownloadSmallVideo(smallVideoUrl);
+
+      const largeVideoUrl = data.details.large_video;
+      checkAndDownloadLargeVideo(largeVideoUrl);
     }
-    navigation.setOptions({
-      tabBarStyle: { display: isExpanded ? "none" : "flex" },
-      headerShown: false,
-    });
-  }, [isExpanded, navigation, user_id, access_token]);
+  }, [user_id, access_token]);
 
   const closePip = () => {
     setPipVisible(false);
-    setExpanded(false);
   };
 
-  const expandPip = () => {
-    setExpanded(true);
-    checkAndDownloadLargeVideo(data.details.large_video);
-    pan.setOffset({ x: 0, y: 0 });
+  function expandPip() {
+    if(data.details.large_video != null || data.details.large_video != ""){
+      closePip();
+    const link = data.details.link;
+    navigation.navigate('PipScreen', {
+      user_id,
+      id: data.id,
+      link,
+      largeVideoUrl: `file://${largeVideoPath}`,
+    });
+    UserActionTrack(user_id, data.id, "IMP");
+    }
   };
 
   const constrainPosition = (x: number, y: number) => {
@@ -185,24 +203,21 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
     }}>
       {data && isPipVisible && (
         <PanGestureHandler
-          onGestureEvent={isExpanded ? undefined : onPanGestureEvent}
-          onHandlerStateChange={isExpanded ? undefined : onHandlerStateChange}
+          onGestureEvent={onPanGestureEvent}
+          onHandlerStateChange={onHandlerStateChange}
         >
           <Animated.View
-            style={[
-              isExpanded
-                ? styles.floaterExpandedContainer
-                : styles.floaterContainer,
-              {
-                transform: [
-                  {
-                    translateX: pan.x
-                  },
-                  {
-                    translateY: pan.y
-                  },
-                ],
-              },
+            style={[styles.floaterContainer,
+            {
+              transform: [
+                {
+                  translateX: pan.x
+                },
+                {
+                  translateY: Animated.subtract(pan.y, new Animated.Value(headerHeight)),
+                },
+              ],
+            },
             ]}
           >
             <View onTouchEnd={expandPip} style={{ flex: 1 }}>
@@ -213,12 +228,10 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
                     resizeMode="stretch"
                     muted={true}
                     source={{
-                      uri: isExpanded
-                        ? `file://${largeVideoPath}`
-                        : `file://${smallVideoPath}`,
+                      uri: `file://${smallVideoPath}`,
                     }}
                     style={{
-                      borderRadius: isExpanded ? 0 : 15,
+                      borderRadius: 15,
                       position: "absolute",
                       overflow: "hidden",
                       top: 0,
@@ -233,68 +246,42 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
             <TouchableWithoutFeedback
               onPress={closePip}
               style={
-                isExpanded
-                  ? styles.expandedClosePipButton
-                  : styles.closePipButton
+                styles.closePipButton
               }
             >
               <Image
                 source={require("../assets/images/close.png")}
                 style={
-                  isExpanded
-                    ? styles.expandedClosePipButtonText
-                    : styles.closePipButtonText
+                  styles.closePipButtonText
                 }
               />
             </TouchableWithoutFeedback>
 
-            {data && data.details && data.details.link && (
-              <View
+            {data.details.large_video != null && data.details.large_video != "" &&
+            <TouchableWithoutFeedback
+              onPress={expandPip}
+              style={{
+                padding: 7,
+                position: "absolute",
+                bottom: 7,
+                right: 5,
+                backgroundColor: "black",
+                borderRadius: 20,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={require("../assets/images/enlarge.png")}
                 style={{
-                  display: isExpanded ? "flex" : "none",
-                  position: "absolute",
-                  width: width,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  bottom:
-                    Platform.OS === "ios" ? height * 0.045 : height * 0.025,
+                  height: 10,
+                  width: 10,
                 }}
-              >
-                <TouchableWithoutFeedback
-                  style={{
-                    backgroundColor: "white",
-                    borderRadius: 30,
+              />
+            </TouchableWithoutFeedback>}
 
-                  }}
-                  onPress={() => {
-                    if (data.details.link) {
-                      Linking.openURL(data.details.link);
-                    }
-                    UserActionTrack(user_id, data.id, "CLK");
-                    // const fetchData = async () => {
-                    //   try {
-                    //     await UserActionTrack(data.id, user_id, 'CLK');
-                    //   } catch (error) {
-                    //     console.error('Error in fetching data:', error);
-                    //   }
-                    // };
-                    // fetchData();
-                  }}
-                >
-                  <Text style={{
-                    color: "black",
-                    fontWeight: "600",
-                    textAlign: 'center',
-                    textAlignVertical: 'center',
-                    height: 45,
-                    paddingVertical: 10,
-                    paddingHorizontal: 25,
-                  }}>
-                    Continue
-                  </Text>
-                </TouchableWithoutFeedback>
-              </View>
-            )}
+
           </Animated.View>
         </PanGestureHandler>
       )}
@@ -304,7 +291,7 @@ const Pip: React.FC<PipProps> = ({ access_token, campaigns, user_id }) => {
 
 const styles = StyleSheet.create({
   closePipButton: {
-    padding: 5,
+    padding: 7,
     position: "absolute",
     top: 5,
     right: 5,
@@ -315,17 +302,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   closePipButtonText: {
-    height: 8,
-    width: 8,
-  },
-  expandedClosePipButton: {
-    position: "absolute",
-    top: Platform.OS === "ios" ? height * 0.1 : 25,
-    right: 25,
-  },
-  expandedClosePipButtonText: {
-    height: 20,
-    width: 20,
+    height: 9,
+    width: 9,
   },
   floaterContainer: {
     backgroundColor: "white",
@@ -333,18 +311,6 @@ const styles = StyleSheet.create({
     height: 200,
     position: "absolute",
     borderRadius: 15,
-    display: "flex",
-    flexDirection: "row",
-    zIndex: 999999, // Add a high zIndex
-    elevation: 999999, // Add elevation for Android
-  },
-  floaterExpandedContainer: {
-    paddingTop: Platform.OS === "ios" ? height * 0.07 : 0,
-    paddingBottom: Platform.OS === "ios" ? height * 0.025 : 0,
-    backgroundColor: "black",
-    width: width,
-    height: height,
-    position: "absolute",
     display: "flex",
     flexDirection: "row",
     zIndex: 999999, // Add a high zIndex
